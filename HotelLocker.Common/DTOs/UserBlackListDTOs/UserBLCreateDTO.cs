@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace HotelLocker.Common.DTOs
+namespace HotelLocker.Common.DTOs.UserBlackListDTOs
 {
-    public class AccessByWorkerDTO
+    public class UserBLCreateDTO
     {
         [Required]
-        public int RoomId { get; set; }
+        public int GuestId { get; set; }
         [Required]
+        [MaxLength(100)]
         public string Reason { get; set; }
     }
 }

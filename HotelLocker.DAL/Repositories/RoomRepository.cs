@@ -40,6 +40,7 @@ namespace HotelLocker.DAL.Repositories
             return db.Rooms
                 .Include(r => r.Hotel)
                 .Include(r => r.Reservations)
+                .Include(r => r.RoomAccesses)
                 .Where(r => r.Id == id)
                 .FirstOrDefault();
         }
@@ -48,7 +49,8 @@ namespace HotelLocker.DAL.Repositories
         {
             return db.Rooms
                 .Include(r => r.Hotel)
-                .Include(r => r.Reservations);
+                .Include(r => r.Reservations)
+                .Include(r => r.RoomAccesses);
         }
 
         public void Update(Room item)

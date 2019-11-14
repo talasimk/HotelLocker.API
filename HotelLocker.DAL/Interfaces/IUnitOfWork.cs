@@ -1,4 +1,5 @@
 ﻿using HotelLocker.DAL.Entities;
+using HotelLocker.DAL.Repositories;
 using System.Threading.Tasks;
 
 namespace HotelLocker.DAL.Interfaces
@@ -13,7 +14,7 @@ namespace HotelLocker.DAL.Interfaces
         IRepository<HotelStaff> HotelStaffs { get; }
         IRepository<Reservation> Reservations { get; }
         IRepository<RoomAccess> RoomAccesses { get; }
-        IRepository<UserBlackList> UserBlackLists { get; }
+        UserBlackListRepository UserBlackLists { get; }
         Task SaveAsync();
     }
 }

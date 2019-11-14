@@ -54,7 +54,8 @@ namespace HotelLocker.BLL.Extensions
                 .AddScoped<IHotelService, HotelService>()
                 .AddScoped<IRoomService, RoomService>()
                 .AddScoped<IReservationService, ReservationService>()
-                .AddScoped<IAccessService, AccessService>();
+                .AddScoped<IAccessService, AccessService>()
+                .AddScoped<IUserBlackListService, UserBlackListService>();
         }
 
         private static AuthenticationBuilder AddTokenAuthentication(this IServiceCollection services, IConfiguration configuration)

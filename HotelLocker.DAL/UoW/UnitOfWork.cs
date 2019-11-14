@@ -104,7 +104,7 @@ namespace HotelLocker.DAL.UoW
             }
         }
 
-        public IRepository<UserBlackList> UserBlackLists
+        public UserBlackListRepository UserBlackLists
         {
             get
             {

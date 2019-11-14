@@ -28,12 +28,17 @@ namespace HotelLocker.DAL.Repositories
 
         public Guest Get(int id)
         {
-            return db.Guests.Find(id);
+            return db.Guests
+                .Include(g => g.RoomAccesses)
+                .Include(g => g.Reservations)
+                .Where(x => x.Id == id).FirstOrDefault();
         }
 
         public IEnumerable<Guest> GetAll()
         {
-            return db.Guests;
+            return db.Guests
+                .Include(g => g.RoomAccesses)
+                .Include(g => g.Reservations);
         }
 
         public void Update(Guest item)

@@ -37,12 +37,16 @@ namespace HotelLocker.DAL.Repositories
 
         public User Get(int id)
         {
-            return db.Users.Find(id);
+            return db.Users
+                .Include(x => x.RoomAccesses)
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
         }
 
         public IEnumerable<User> GetAll()
         {
-            return db.Users;
+            return db.Users
+                .Include(x => x.RoomAccesses);
         }
 
         public void Update(User item)

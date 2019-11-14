@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace HotelLocker.DAL.Repositories
 {
-    class UserBlackListRepository : IRepository<UserBlackList>
+    public class UserBlackListRepository 
     {
         private readonly HotelContext db;
 
@@ -22,9 +22,8 @@ namespace HotelLocker.DAL.Repositories
             db.UserBlackLists.Add(item);
         }
 
-        public void Delete(int id)
+        public void Delete(UserBlackList blackList)
         {
-            UserBlackList blackList = db.UserBlackLists.Find(id);
             if (blackList != null)
                 db.UserBlackLists.Remove(blackList);
         }
@@ -36,12 +35,18 @@ namespace HotelLocker.DAL.Repositories
 
         public UserBlackList Get(int id)
         {
-            return db.UserBlackLists.Find(id);
+            return db.UserBlackLists
+                .Include(x => x.Hotel)
+                .Include(x => x.Guest)
+                .Where(x => x.HotelId == id)
+                .FirstOrDefault();
         }
 
         public IEnumerable<UserBlackList> GetAll()
         {
-            return db.UserBlackLists;
+            return db.UserBlackLists
+                .Include(x => x.Hotel)
+                .Include(x => x.Guest);
         }
 
         public void Update(UserBlackList item)

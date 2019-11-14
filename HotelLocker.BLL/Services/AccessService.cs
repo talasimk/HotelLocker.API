@@ -134,7 +134,7 @@ namespace HotelLocker.BLL.Services
             DateTime currentTime = DateTime.Now;
             Guest user = context.Guests.Get(userId);
             bool condition1 = user.Reservations
-                .Where(r => r.RoomId == roomId && r.StartDate <= currentTime && r.EndDate >= currentTime)
+                .Where(r => r.RoomId == roomId && r.StartDate <= currentTime && r.EndDate >= currentTime && r.IsPaid)
                 .Count() != 0;
             var lastAccess = user.RoomAccesses.Where(r => r.RoomId == roomId && r.IsOpen).OrderBy(r => r.DateTime).LastOrDefault();
             var lastAccessAgo = (lastAccess != null) ? currentTime - lastAccess.DateTime : TimeSpan.FromHours(4);

@@ -32,6 +32,10 @@ namespace HotelLocker.BLL.Services
             if (room == null)
                 throw new NotFoundException("No such room");
 
+            Guest guest = context.Guests.Get(userId);
+            if(context.UserBlackLists.GetAll().Where(x => x.GuestId == userId && x.HotelId == room.HotelId).Count()!=0)
+                throw new ValidationException("You are in a hotel's black list");
+
             if (reservationCreateDTO.EndDate < reservationCreateDTO.StartDate)
                 throw new ValidationException("Reservation end date can't be greater than a start date");
 
@@ -39,7 +43,7 @@ namespace HotelLocker.BLL.Services
                 throw new ValidationException("Reservation duration can't be greater than a 20 days");
 
             bool canBeReserved =  room.Reservations
-                .Where(r => r.EndDate < reservationCreateDTO.StartDate || r.StartDate > reservationCreateDTO.EndDate)
+                .Where(r =>  r.EndDate < reservationCreateDTO.StartDate || r.StartDate > reservationCreateDTO.EndDate)
                 .Count() == room.Reservations.Count();
             if (!canBeReserved)
             {
@@ -53,7 +57,67 @@ namespace HotelLocker.BLL.Services
             return reservation.ToReservationDTO();
         }
 
-        public List<ReservationDTO> GetHotelReservations(int adminId, DateTime from, DateTime to, int roomId, int guestId)
+        public async Task<ReservationDTO> EditReservation(ReservationEditDTO reservationEditDTO, int userId)
+        {
+            ValidationResults result = ModelValidator.IsValid(reservationEditDTO);
+            if (!result.Successed)
+                throw ValidationExceptionBuilder.BuildValidationException(result);
+
+            var reservation = context.Reservations.Get(reservationEditDTO.Id);
+            if (reservation == null)
+                throw new NotFoundException("No such reservation");
+
+            if (reservation.GuestId != userId)
+                throw new PermissionException();
+            if (reservationEditDTO.StartDate != null && reservationEditDTO.EndDate != null)
+            {
+                bool canBeReserved = context.Reservations.GetAll()
+                    .Where(r => r.RoomId == reservation.RoomId && r.Id != reservation.Id && (r.StartDate < reservationEditDTO.StartDate && r.EndDate > reservationEditDTO.StartDate) || (r.StartDate < reservationEditDTO.EndDate && r.EndDate > reservationEditDTO.EndDate))
+                    .Count() == 0;
+                if (!canBeReserved)
+                {
+                    throw new ValidationException("Room is not available is this time");
+                }
+                reservation.StartDate = reservationEditDTO.StartDate;
+                reservation.EndDate = reservationEditDTO.EndDate;
+
+            }
+            if(!string.IsNullOrEmpty(reservationEditDTO.AdditionalInfo))
+            {
+                reservation.AdditionalInfo = reservationEditDTO.AdditionalInfo;
+            }
+            context.Reservations.Update(reservation);
+            await context.SaveAsync();
+            return reservation.ToReservationDTO();
+        }
+
+        public async Task ConfirmPayment(int reservationId, int userId)
+        {
+            var reservation = context.Reservations.Get(reservationId);
+            if (reservation == null)
+                throw new NotFoundException("No such reservation");
+
+            if (reservation.Room.Hotel.HotelAdminId != userId)
+                throw new PermissionException();
+
+            reservation.IsPaid = true;
+            context.Reservations.Update(reservation);
+            await context.SaveAsync();
+        }
+
+        public async Task DeleteReservation(int id, int userId)
+        {
+            var reservation = context.Reservations.Get(id);
+            if (reservation == null)
+                throw new NotFoundException("No such reservation");
+
+            if (reservation.GuestId != userId)
+                throw new PermissionException();
+            context.Reservations.Delete(reservation.Id);
+            await context.SaveAsync();
+        }
+
+         public List<ReservationDTO> GetHotelReservations(int adminId, DateTime from, DateTime to, int roomId, int guestId)
         {
             HotelAdmin hotelAdmin = context.HotelAdmins.Get(adminId);
             int hotelId = hotelAdmin.Hotel.Id;

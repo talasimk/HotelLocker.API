@@ -29,12 +29,18 @@ namespace HotelLocker.DAL.Repositories
 
         public HotelAdmin Get(int id)
         {
-            return db.HotelAdmins.Find(id);
+            return db.HotelAdmins
+                .Include(x => x.RoomAccesses)
+                .Include(x => x.Hotel)
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
         }
 
         public IEnumerable<HotelAdmin> GetAll()
         {
-            return db.HotelAdmins;
+            return db.HotelAdmins
+                .Include(x => x.RoomAccesses)
+                .Include(x => x.Hotel);
         }
 
         public void Update(HotelAdmin item)
