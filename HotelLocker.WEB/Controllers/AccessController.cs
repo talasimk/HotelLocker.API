@@ -24,24 +24,38 @@ namespace HotelLocker.WEB.Controllers
         }
 
         [Authorize(Roles = "hotel-staff")]
-        [HttpPost]
+        [HttpPost("staff")]
         public async Task GetAccessByHotelStaff([FromBody] AccessByWorkerDTO accessByWorkerDTO)
         {
             await accessService.GetAccessByHotelStaff(User.ConvertToUserData().Id, accessByWorkerDTO);
         }
 
         [Authorize(Roles = "hotel-admin")]
-        [HttpPost]
+        [HttpPost("admin")]
         public async Task GetAccessByHotelAdmin([FromBody] AccessByWorkerDTO accessByWorkerDTO)
         {
             await accessService.GetAccessByHotelStaff(User.ConvertToUserData().Id, accessByWorkerDTO);
         }
 
         [Authorize(Roles = "user")]
-        [HttpPost("{id}")]
+        [HttpPost("user/{id}")]
         public async Task GetAccessByUser(int id)
         {
             await accessService.GetAccessByUser(User.ConvertToUserData().Id, id);
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpGet("user/{reservationId}")]
+        public List<RoomAccessDTO> GetAccessHistoryForUser(int reservationId)
+        {
+            return accessService.GetRoomAccessUserDTO(reservationId, User.ConvertToUserData().Id);
+        }
+
+        [Authorize(Roles = "hotel-admin")]
+        [HttpGet("admin/{roomId}")]
+        public List<RoomAccessDTO> GetAccessHistoryForAdmin(int roomId)
+        {
+            return accessService.GetRoomAccessDTO(roomId, User.ConvertToUserData().Id);
         }
 
     }
