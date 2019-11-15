@@ -124,7 +124,7 @@ namespace HotelLocker.BLL.Services
             var room = context.Rooms.Get(roomId);
             if (room == null)
                 throw new NotFoundException("No such room");
-            if (room.Hotel.HotelAdminId != userId || room.Hotel.HotelStaffs.Where(s => s.Id == userId).Count() == 0)
+            if (room.Hotel.HotelAdminId != userId && room.Hotel.HotelStaffs.Where(s => s.Id == userId).Count() == 0)
                 throw new PermissionException();
             return room.RoomAccesses.Select(r => r.ToRoomAccessDTO()).ToList();
         }
