@@ -8,8 +8,6 @@ namespace HotelLocker.Common.DTOs.ReservationDTOs
     public class ReservationCreateDTO
     {
         [Required]
-        public int GuestId { get; set; }
-        [Required]
 
         public int RoomId { get; set; }
         [Required]

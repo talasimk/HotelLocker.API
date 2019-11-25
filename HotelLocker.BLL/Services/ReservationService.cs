@@ -37,7 +37,7 @@ namespace HotelLocker.BLL.Services
                 throw new ValidationException("You are in a hotel's black list");
 
             if (reservationCreateDTO.EndDate < reservationCreateDTO.StartDate)
-                throw new ValidationException("Reservation end date can't be greater than a start date");
+                throw new ValidationException("Reservation end date must be greater than a start date");
 
             if (reservationCreateDTO.EndDate - reservationCreateDTO.StartDate > TimeSpan.FromDays(20))
                 throw new ValidationException("Reservation duration can't be greater than a 20 days");

@@ -11,7 +11,6 @@ namespace HotelLocker.BLL.Mappers
             {
                 RoomId = dto.RoomId,
                 StartDate = dto.StartDate,
-                GuestId = dto.GuestId,
                 EndDate = dto.EndDate,
                 AdditionalInfo = dto.AdditionalInfo
             };
